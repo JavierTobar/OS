@@ -1,6 +1,6 @@
 # Simulation of an OS
 
-Note: I will be releasing an updated version 3.0 late March or early April.
+Note: I will be releasing version 3.0 late March or early April.
        Version 3.0 will support virtual memory.
 
 To run the program simply copy the files and execute: ./compile.sh
