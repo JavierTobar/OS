@@ -22,7 +22,7 @@ void shell_memory_initialize()
     }
 }
 
-void shell_memory_destory()
+void shell_memory_destroy()
 {
     for (size_t i = 0; i < MEM_LENGTH; ++i)
     {

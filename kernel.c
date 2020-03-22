@@ -17,104 +17,108 @@ struct ReadyQueue
 void roundRobin();
 void terminate();
 void addToReady(struct PCB *pcb);
+
 int main(int argc, const char *argv[])
 {
 	shellUI();
 }
 
-void myinit(char *filename) 
+void myinit(char *filename)
 {
 	int start = 0, end = 0; // dummy values, they'll get overwritten in addToRAM
-	char buffer[100]; //assumes max of 100 char per line
+	char buffer[100];				//assumes max of 100 char per line
 	FILE *file = fopen(filename, "r");
 	if (file == NULL) // this SHOULD never fail since it's been guaranteed to exist in exec()
 	{
 		printf("Error opening the file from kernel.c \n");
 		return;
-	} else 
-		{
-			addToRAM(file, &start, &end); // we're passing pointers so they'll be properly updated in addToRAM
-			fclose(file); // no longer needed
-			struct PCB* pcb = makePCB(start, end);
-			addToReady(pcb);
-		}
+	}
+	else
+	{
+		addToRAM(file, &start, &end); // we're passing pointers so they'll be properly updated in addToRAM
+		fclose(file);									// no longer needed
+		struct PCB *pcb = makePCB(start, end);
+		addToReady(pcb);
+	}
 }
-
 
 void addToReady(struct PCB *pcb)
 {
 	if (readyQueue.head == NULL)
 	{
-		readyQueue.head = pcb; 
-		return; // we don't assign value to tail 
-	} else
+		readyQueue.head = pcb;
+		return; // we don't assign value to tail
+	}
+	else
+	{
+		struct PCB **traverser = &(readyQueue.head)->next;
+		while (*traverser)
 		{
-			struct PCB **traverser = &(readyQueue.head)->next;
-			while(*traverser)
-			{
-				traverser = &(*traverser)->next;
-			}
-			*traverser = pcb;
-			readyQueue.tail = *traverser;
+			traverser = &(*traverser)->next;
 		}
+		*traverser = pcb;
+		readyQueue.tail = *traverser;
+	}
 }
 
 void scheduler()
 {
 	CPU.IP = (readyQueue.head)->PC;
 	if (CPU.IP == 0) // if statement for the very first program
-	{	
-		if ((readyQueue.head->end - readyQueue.head->PC) >= 2) // i.e. we pass 2 full quantas
-       {
-          if (run(2) == 1) 
-			 { 
-				 terminate();
-				 return;
-			 }
-			 (readyQueue.head)->PC+=2;
-			 roundRobin();
-			 return;
-       }
-       else if((readyQueue.head->end - readyQueue.head->PC) == 1)
-       {
-                if (run(1) == 1) terminate();
-					 (readyQueue.head)->PC++;
-                terminate();
-					 return;
-       }
-       else if ((readyQueue.head->end - readyQueue.head->PC) == 0) 
-			 // this should always get checked, but might fail if it jumps over (?)
-       {
-			 if (run(1) == 1) terminate();
-			 return; // 0 means 1 instruction left
-       }
-	}
-
-	if (CPU.IP > 0) //while (CPU.quanta > 0 && CPU.IP != 0) // to check if CPU is available : quanta finished or nothing assigned to it 
 	{
-		// checks if you pass 2 quanta or less, depending on how close the program is to ending 
 		if ((readyQueue.head->end - readyQueue.head->PC) >= 2) // i.e. we pass 2 full quantas
 		{
-			if (run(2) == 1) terminate();
-			(readyQueue.head)->PC+=2;
+			if (run(2) == 1)
+			{
+				terminate();
+				return;
+			}
+			(readyQueue.head)->PC += 2;
 			roundRobin();
 			return;
-		} 
-		else if((readyQueue.head->end - readyQueue.head->PC) == 1)
+		}
+		else if ((readyQueue.head->end - readyQueue.head->PC) == 1)
 		{
-					if (run(2) == 1) terminate(); // 1 means 2 instructions left 
-					return;
-		} 
-		else if ((readyQueue.head->end - readyQueue.head->PC) == 0) // this should always get checked, but might fail if it jumps over (?)
+			if (run(1) == 1)
+				terminate();
+			(readyQueue.head)->PC++;
+			terminate();
+			return;
+		}
+		else if ((readyQueue.head->end - readyQueue.head->PC) == 0)
 		{
-			if (run(1) == 1) terminate();
+			if (run(1) == 1)
+				terminate();
+			return; // 0 means 1 instruction left
+		}
+	}
+	if (CPU.IP > 0) // to check if CPU is available : quanta finished or nothing assigned to it
+	{
+		// checks if you pass 2 quanta or less, depending on how close the program is to ending
+		if ((readyQueue.head->end - readyQueue.head->PC) >= 2) // i.e. we pass 2 full quantas
+		{
+			if (run(2) == 1)
+				terminate();
+			(readyQueue.head)->PC += 2;
+			roundRobin();
+			return;
+		}
+		else if ((readyQueue.head->end - readyQueue.head->PC) == 1)
+		{
+			if (run(2) == 1)
+				terminate(); // 1 means 2 instructions left
+			return;
+		}
+		else if ((readyQueue.head->end - readyQueue.head->PC) == 0)
+		{
+			if (run(1) == 1)
+				terminate();
 			return;
 		}
 	}
-}			
+}
 
-
-// this will always do the same, i.e. place head in the back of queue and move other programs up 
+// this will always do the same, i.e. place head in the back of queue and move other programs up
 void roundRobin()
 {
 	struct PCB *tmp = readyQueue.head;
@@ -127,25 +131,27 @@ void roundRobin()
 		readyQueue.head = readyQueue.tail;
 		readyQueue.tail = tmp;
 		scheduler();
-	} else {
+	}
+	else
+	{
 
-	// this will only be reached if all 3 programs are in ready queue
-	readyQueue.head = tmp->next;
-	//(readyQueue.tail)->next = tmp;
-	readyQueue.tail = tmp;
-	tmp->next = NULL;
-	scheduler();
-}
+		// this will only be reached if all 3 programs are in ready queue
+		readyQueue.head = tmp->next;
+		readyQueue.tail = tmp;
+		tmp->next = NULL;
+		scheduler();
+	}
 }
 
 // this will terminate the program, this will always be called when the head of readyQueue has finished
 void terminate()
 {
-	if ((readyQueue.head)->next == NULL) // i.e. only one program left 
+	if ((readyQueue.head)->next == NULL) // i.e. only one program left
 	{
 		free(readyQueue.head);
 		readyQueue.head = NULL;
-		for (int i = 0; i < 1000; i++) ram[i] = NULL; 
+		for (int i = 0; i < 1000; i++)
+			ram[i] = NULL;
 		return; // doesnt call scheduler, returns back to interpreter();
 	}
 	struct PCB *tmp = (readyQueue.head)->next;
@@ -153,33 +159,3 @@ void terminate()
 	readyQueue.head = tmp;
 	scheduler();
 }
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

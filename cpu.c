@@ -16,13 +16,15 @@ int run(int quanta)
 	while (quanta > 0)
 	{
 		strcpy(CPU.IR, ram[CPU.IP]);
-		if (strncmp(CPU.IR, "quit", 4) == 0) // if quit, script terminates, but not program
+		if (strncmp(CPU.IR, "quit", 4) == 0) // if quit then script terminates but not program
 		{
 			return 1; // this will let scheduler know to call terminate on this script
-		} else {
-		interpret(CPU.IR);
-		quanta--;
-		CPU.IP++;
+		}
+		else
+		{
+			interpret(CPU.IR);
+			quanta--;
+			CPU.IP++;
 		}
 	}
 	CPU.quanta = 2; // reset for next call

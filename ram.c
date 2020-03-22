@@ -3,7 +3,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "ram.h"
-char *ram[1000] = { NULL };
+
+char *ram[1000] = {NULL};
 
 void addToRAM(FILE *p, int *start, int *end)
 {
@@ -11,28 +12,29 @@ void addToRAM(FILE *p, int *start, int *end)
 	char buffer[100]; // assumes max of 100 char per line
 	for (i = 0; i < 999; i++)
 	{
-		if (ram[i] == NULL) break; // this is to find the first null cell
+		if (ram[i] == NULL)
+			break; // this is to find the first null cell
 	}
-	if (i == 999) 
+	if (i == 999)
 	{
 		printf("No space in ram for the file \n");
 		return;
-	} else 
-		{
-		
-			*start = i;
-			while(fgets(buffer, 1000, p) != NULL)
-			{
-				if (i == 999)
-				{
-					printf("No space in ram for the file \n");
-					return;
-				}
-				ram[i] = strdup(buffer);
-				i++;
-			}
-			i--;
-			*end = i;
-		}
+	}
+	else
+	{
 
+		*start = i;
+		while (fgets(buffer, 1000, p) != NULL)
+		{
+			if (i == 999)
+			{
+				printf("No space in ram for the file \n");
+				return;
+			}
+			ram[i] = strdup(buffer);
+			i++;
+		}
+		i--;
+		*end = i;
+	}
 }

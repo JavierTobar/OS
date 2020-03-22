@@ -8,7 +8,7 @@ struct PCB
 	int PC;
 	int start;
 	int end;
-	struct PCB *next; // one of many possible solutions to traverse the ready list
+	struct PCB *next; 
 };
 
 struct PCB* makePCB(int start, int end)

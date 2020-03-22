@@ -89,56 +89,58 @@ int help()
            "set VAR STRING  Assigns a value to shell memory\n"
            "print VAR       Displays the STRING assigned to VAR\n"
            "run SCRIPT.TXT  Executes the file SCRIPT.TXT\n"
-			  "exec p1 p2 p3   Execites concurrent programs\n");
-	 return 0;
+           "exec p1 p2 p3   Execites concurrent programs\n");
+    return 0;
 }
-// p2 and p3 could be null
-int exec(char *p1,char *p2, char *p3)
+// Note : p2 and p3 could be null
+int exec(char *p1, char *p2, char *p3)
 {
-	FILE *file;
-	file = fopen(p1, "r");
-	
-	if (file == NULL)
-	{
-		printf("Error finding file %s \n", p1);
-		return 1;
-	} else 
-		{
-			fclose(file);
-			myinit(p1);
-		}
-	
-	if (p2 != NULL)
-	{
-		file = fopen(p2, "r");
-		if (file == NULL)
-		{
-			printf("Error finding file %s \n", p2);
-			return 1;
-		} else
-			{
-				fclose(file);
-				myinit(p2);
+    FILE *file;
+    file = fopen(p1, "r");
 
-				if (p3 != NULL)
-				{
-					file = fopen(p3, "r");
-					if (file == NULL)
-						{
-							printf("Error finding file %s \n", p3);
-							return 1;
-						} else
-							{
-								fclose(file);
-								myinit(p3);
-							}
-				}
-			}
-	}
-	scheduler();
-	return 0;
+    if (file == NULL)
+    {
+        printf("Error finding file %s \n", p1);
+        return 1;
+    }
+    else
+    {
+        fclose(file);
+        myinit(p1);
+    }
+
+    if (p2 != NULL)
+    {
+        file = fopen(p2, "r");
+        if (file == NULL)
+        {
+            printf("Error finding file %s \n", p2);
+            return 1;
+        }
+        else
+        {
+            fclose(file);
+            myinit(p2);
+
+            if (p3 != NULL)
+            {
+                file = fopen(p3, "r");
+                if (file == NULL)
+                {
+                    printf("Error finding file %s \n", p3);
+                    return 1;
+                }
+                else
+                {
+                    fclose(file);
+                    myinit(p3);
+                }
+            }
+        }
+    }
+    scheduler();
+    return 0;
 }
-
 
 int quit()
 {
@@ -208,37 +210,36 @@ int interpret(char *raw_input)
     if (tokens[0] == NULL)
         return 0; // empty command
 
-	 if (strcmp(tokens[0], "exec") == 0)
-	 {
-		
-		if (tokens[2] != NULL)
-		{
-
-		if (strcmp(tokens[1], tokens[2]) == 0)
-		{
-			printf("Error: %s already loaded \n", tokens[1]);
-			free(tokens);
-			return 1;
-		} 
-		if (tokens [3] != NULL)
-		{
-			if (strcmp(tokens[1], tokens[3]) == 0)
-			{
-				printf("Error: %s already loaded \n", tokens [1]);
-				free(tokens);
-				return 1;
-			} else if (strcmp(tokens[2], tokens[3]) == 0)
-				{ 
-					printf("Error: %s already loaded \n", tokens[2]);
-					free(tokens);
-					return 1;
-				}
-		}
-		}
-						int result = exec(tokens[1], tokens[2], tokens[3]);
-						free(tokens);
-						return result;
-}
+    if (strcmp(tokens[0], "exec") == 0)
+    {
+        if (tokens[2] != NULL)
+        {
+            if (strcmp(tokens[1], tokens[2]) == 0)
+            {
+                printf("Error: %s already loaded \n", tokens[1]);
+                free(tokens);
+                return 1;
+            }
+            if (tokens[3] != NULL)
+            {
+                if (strcmp(tokens[1], tokens[3]) == 0)
+                {
+                    printf("Error: %s already loaded \n", tokens[1]);
+                    free(tokens);
+                    return 1;
+                }
+                else if (strcmp(tokens[2], tokens[3]) == 0)
+                {
+                    printf("Error: %s already loaded \n", tokens[2]);
+                    free(tokens);
+                    return 1;
+                }
+            }
+        }
+        int result = exec(tokens[1], tokens[2], tokens[3]);
+        free(tokens);
+        return result;
+    }
 
     if (strcmp(tokens[0], "help") == 0)
     {
@@ -260,10 +261,10 @@ int interpret(char *raw_input)
             free(tokens);
             return 1;
         }
-		  if (in_file_flag == 0)
-		  {
-			  free(raw_input);
-		  }
+        if (in_file_flag == 0)
+        {
+            free(raw_input);
+        }
         free(tokens);
         return quit();
     };
