@@ -5,40 +5,35 @@
 	Creates a PCB from the fileName
 	adds it to the ReadyQueue
 */
-void myinit(char *filename);
+/**
+ * Creates a PCB from the fileName
+ *
+ * @param filename  The name of the file
+ * @return pcb created from filename or NULL if file not found
+ */
+struct PCB *myinit(char *filename);
 
-/*
-	Scheduler assigns quanta to each process
-	Note : we only assign a maximum of 2 quanta
-	If process is done executing then terminate
-	else call roundRobin scheduling on the readyQueue
-*/
+/**
+ * Executes the pcbs in readyQueue using round robin scheduling
+ */
 void scheduler();
 
-/*
-	Adds PCB to the back of the PCB linked-list (readyQueue)
-*/
+/**
+ * Adds a pcb to the linked-list readyQueue
+ *
+ * @param pcb   The pcb to add
+ */
 void addToReady(struct PCB *pcb);
 
-/*
-	This will terminate (free) the current head of the readyQueue 
-	It will also take care of pointers that were pointing to this allocated memory
-*/
+/**
+ * Terminates the head of the readyQueue
+ */
 void terminate();
 
-/*
-	our ReadyQueue is a linked-list with two pointers :
-	One to the head of the linked-list and one to the tail of the linked-list
-	These pointers allow us to do roundRobin scheduling in O(n) rather than O(2n)
-	Note : these complexities are both linear and this was simply a design choice
-*/
 struct ReadyQueue
 {
 	struct PCB *head;
 	struct PCB *tail;
 } readyQueue;
-
-
-
 
 #endif

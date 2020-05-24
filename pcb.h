@@ -1,25 +1,28 @@
 #ifndef PCB_H
 #define PCB_H
 
-/*
-	Our PCB struct has :
-	a PC : Program Counter
-	a start : index in mememory
-	an end : index in memory
-	a pointer : to the PCB that comes after the current PCB 
-	This pointer is crucial for roundRobin scheduling
-*/
+extern int pidCounter;
+
 struct PCB
 {
-	int PC;
-	int start;
-	int end;
-	struct PCB *next;
+    int PC;
+    int start; // DEPRECATED SINCE WE'VE IMPLEMENTED VIRTUAL MEMORY
+    int end; // DEPRECATED SINCE WE'VE IMPLEMENTED VIRTUAL MEMORY
+    int PID;
+    int pageTable[10];
+    int PC_page;
+    int PC_offset;
+    int pages_max;
+    struct PCB *next; // one of many possible solutions to traverse the ready list
 };
 
-/*
-	This function malloc's a PCB and initializes it accordingly
-*/
+/**
+ * Mallocs a pcb and initializes it accordingly
+ *
+ * @param start where the pcb starts in ram, this is 0 now since we've implemented virtual memory
+ * @param end where the pcb ends in ram, this is 0 now since we've implemented virtual memory
+ * @return pcb
+ */
 struct PCB* makePCB(int start, int end);
 
 #endif

@@ -1,0 +1,5 @@
+set x 10
+print x
+set b 73
+print b
+quit
