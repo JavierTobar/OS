@@ -1,8 +1,5 @@
 # Simulation of an OS
 
-Note: I will be releasing version 3.0 late March or early April.
-       Version 3.0 will support virtual memory.
-
 To run the program simply copy the files and execute: ./compile.sh
 You may need to make compile.sh executable, execute chmod +x compile.sh
 
