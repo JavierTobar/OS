@@ -11,5 +11,3 @@ Currently, it can execute any bash commands.
 
 Documentation for the functions can be found in their respective header files. 
 Some C files also contain comments explaining some design decisions. 
-
-Feedback is appreciated.
